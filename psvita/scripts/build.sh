@@ -33,25 +33,26 @@ check_dep() {
 
 check_dep cmake
 check_dep make
-check_dep git
+check_dep patch
 check_dep python3
 check_dep curl
 
 apply_patch() {
-    local patch="$1"
-    local target_dir="$2"
-    if git -C "$target_dir" apply --check "$patch" 2>/dev/null; then
-        git -C "$target_dir" apply "$patch"
-        echo "  Applied: $patch"
+    local patchfile="$1"
+    if patch -d "$REPO_ROOT" -p1 --dry-run --silent < "$patchfile" 2>/dev/null; then
+        patch -d "$REPO_ROOT" -p1 < "$patchfile"
+        echo "  Applied: $(basename "$patchfile")"
+    elif patch -d "$REPO_ROOT" -p1 --dry-run --reverse --silent < "$patchfile" 2>/dev/null; then
+        echo "  Skipped (already applied): $(basename "$patchfile")"
     else
-        echo "  Skipped (already applied or conflict): $patch"
+        echo "  WARNING: conflict in $(basename "$patchfile") — skipping"
     fi
 }
 
 echo "==> Applying source patches..."
 for p in "$SCRIPT_DIR"/*.patch; do
     [[ -f "$p" ]] || continue
-    apply_patch "$p" "$REPO_ROOT"
+    apply_patch "$p"
 done
 
 echo "==> Checking vitasdk libraries..."

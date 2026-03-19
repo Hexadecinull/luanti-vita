@@ -46,28 +46,17 @@ jobs:
 
       - name: Install host build tools
         run: |
-          apk add --no-cache \
-            cmake \
-            make \
-            ninja \
-            git \
-            python3 \
-            curl \
-            bash \
-            zip \
-            unzip \
-            pkgconf 2>/dev/null || \
-          apt-get update -qq && apt-get install -y --no-install-recommends \
-            cmake \
-            make \
-            ninja-build \
-            git \
-            python3 \
-            curl \
-            bash \
-            zip \
-            unzip \
-            pkg-config 2>/dev/null || true
+          if command -v apk &>/dev/null; then
+            apk add --no-cache \
+              cmake make ninja git patch python3 curl bash zip unzip pkgconf
+          else
+            apt-get update -qq
+            apt-get install -y --no-install-recommends \
+              cmake make ninja-build git patch python3 curl bash zip unzip pkg-config
+          fi
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Install vitasdk packages
         run: |
