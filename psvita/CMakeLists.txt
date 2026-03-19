@@ -58,7 +58,42 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VITA_CXX_FLAGS}")
 
 
 find_package(vitaGL REQUIRED)
-find_package(VitaLibs REQUIRED)
+
+set(VITASDK_STUB_LIBS
+    SceAudioOut_stub
+    SceAudioIn_stub
+    SceCtrl_stub
+    SceTouch_stub
+    SceDisplay_stub
+    SceGxm_stub
+    SceKernel_stub
+    ScePower_stub
+    SceSysmodule_stub
+    SceCommonDialog_stub
+    SceIme_stub
+    SceHid_stub
+    SceMotion_stub
+    SceNet_stub
+    SceNetCtl_stub
+    SceAppMgr_stub
+    SceAppUtil_stub
+    ScePgf_stub
+)
+
+set(VITASDK_PORT_LIBS
+    SDL2
+    vitaGL::vitaGL
+    vorbisfile
+    vorbis
+    ogg
+    freetype
+    png16
+    jpeg
+    z
+    m
+    c
+    stdc++
+)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/VitaSources.cmake")
 
@@ -99,27 +134,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${LUANTI_ROOT}/lib/sha256"
 )
 
-set(_VLIB "${VITASDK_ROOT}/lib")
-
-set(VITA_LINK_LIBS vitaGL::vitaGL)
-
-foreach(_lib GLESv2 EGL GL)
-    if(EXISTS "${_VLIB}/lib${_lib}.a")
-        list(APPEND VITA_LINK_LIBS "${_VLIB}/lib${_lib}.a")
-    endif()
-endforeach()
-
-list(APPEND VITA_LINK_LIBS
-    ${VITA_ALL_LIBS}
-    m
-    c
-    stdc++
-)
-
 target_link_libraries(${PROJECT_NAME}
     -Wl,-q
     -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
-    ${VITA_LINK_LIBS}
+    ${VITASDK_PORT_LIBS}
+    ${VITASDK_STUB_LIBS}
 )
 
 vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME} UNSAFE)
