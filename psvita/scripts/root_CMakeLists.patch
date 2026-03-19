@@ -1,0 +1,20 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,19 @@
+ cmake_minimum_required(VERSION 3.12)
+ 
++if(DEFINED ENV{VITASDK})
++  if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
++    set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake"
++        CACHE PATH "Vita toolchain file" FORCE)
++  endif()
++  message(STATUS "PS Vita build detected - delegating to psvita/CMakeLists.txt")
++  cmake_minimum_required(VERSION 3.12)
++  project(luanti_vita_redirect)
++  add_subdirectory(psvita)
++  return()
++endif()
++
+ if(POLICY CMP0177)
+   cmake_policy(SET CMP0177 NEW)
+ endif()

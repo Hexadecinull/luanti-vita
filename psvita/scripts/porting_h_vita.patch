@@ -1,0 +1,22 @@
+--- a/src/porting.h
++++ b/src/porting.h
+@@ -1,5 +1,11 @@
+ #pragma once
+ 
++#ifdef __vita__
++#include "../psvita/src/vita_platform.h"
++#ifndef PORTING_H_VITA_EXTRA
++#define PORTING_H_VITA_EXTRA
++namespace porting {
++std::string getDataPath();
++std::string getUserPath();
++std::string getSharePath();
++std::string getWorldsPath();
++std::string getGamesPath();
++void initializePaths();
++}
++#endif
++#endif
++
+ #include <string>
+ #include <vector>

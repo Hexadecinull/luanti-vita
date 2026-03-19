@@ -1,0 +1,25 @@
+--- a/src/client/game.cpp
++++ b/src/client/game.cpp
+@@ -1,5 +1,11 @@
+ // game.cpp - Luanti game loop
+ 
++#ifdef __vita__
++#include "../psvita/src/vita_platform.h"
++#include "../psvita/src/vita_input.h"
++#endif
++
++// At the top of Game::processPlayerInteraction or equivalent per-frame call:
++#ifdef __vita__
++// Poll vita input and inject SDL events before Irrlicht processes them
++static inline void vita_pre_frame()
++{
++	vita_input::poll();
++	vita_input::inject_sdl_events();
++	vita::flush_main_thread_queue();
++}
++#endif
++
+ // -- Inside the main game loop, before input processing --
++#ifdef __vita__
++	vita_pre_frame();
++#endif

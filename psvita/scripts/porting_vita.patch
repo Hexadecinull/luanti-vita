@@ -1,0 +1,53 @@
+--- a/src/porting.cpp
++++ b/src/porting.cpp
+@@ -1,5 +1,11 @@
+ // This file is part of the "Irrlicht Engine".
+ 
++#ifdef __vita__
++#include "../psvita/src/vita_platform.h"
++#endif
++
++#ifndef __vita__
++
+ #if defined(__APPLE__)
+ 	#include <CoreFoundation/CoreFoundation.h>
+ 	#include <mach-o/dyld.h>
+@@ -50,6 +56,8 @@ namespace porting {
+ 
++#endif // !__vita__
++
+ #ifdef __vita__
+ 
++std::string getDataPath()
++{
++	return std::string(LUANTI_DATA_PATH);
++}
++
++std::string getUserPath()
++{
++	return std::string(LUANTI_USER_PATH "/");
++}
++
++std::string getSharePath()
++{
++	return std::string(LUANTI_DATA_PATH "/");
++}
++
++std::string getWorldsPath()
++{
++	return std::string(LUANTI_WORLD_PATH "/");
++}
++
++std::string getGamesPath()
++{
++	return std::string(LUANTI_GAMES_PATH "/");
++}
++
++void initializePaths()
++{
++	path_share  = LUANTI_DATA_PATH;
++	path_user   = LUANTI_USER_PATH;
++	path_locale = LUANTI_DATA_PATH "/locale";
++}
++
+ #endif // __vita__

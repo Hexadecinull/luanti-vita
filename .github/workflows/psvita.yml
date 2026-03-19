@@ -1,0 +1,173 @@
+name: psvita
+
+on:
+  push:
+    branches:
+      - master
+      - stable-*
+    paths:
+      - 'psvita/**'
+      - 'src/**'
+      - 'irr/**'
+      - 'lib/**'
+      - 'CMakeLists.txt'
+      - '.github/workflows/psvita.yml'
+  pull_request:
+    paths:
+      - 'psvita/**'
+      - 'src/**'
+      - 'irr/**'
+      - 'lib/**'
+      - 'CMakeLists.txt'
+      - '.github/workflows/psvita.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: psvita-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: PS Vita VPK
+    runs-on: ubuntu-22.04
+    container:
+      image: vitasdk/vitasdk:latest
+
+    env:
+      VITASDK: /usr/local/vitasdk
+      BUILD_DIR: build-vita
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install host build tools
+        run: |
+          apk add --no-cache \
+            cmake \
+            make \
+            ninja \
+            git \
+            python3 \
+            curl \
+            bash \
+            zip \
+            unzip \
+            pkgconf 2>/dev/null || \
+          apt-get update -qq && apt-get install -y --no-install-recommends \
+            cmake \
+            make \
+            ninja-build \
+            git \
+            python3 \
+            curl \
+            bash \
+            zip \
+            unzip \
+            pkg-config 2>/dev/null || true
+
+      - name: Install vitasdk packages
+        run: |
+          export PATH="$VITASDK/bin:$PATH"
+          vdpm \
+            SDL2 \
+            vitaGL \
+            freetype \
+            libogg \
+            libvorbis \
+            libpng \
+            libjpeg-turbo \
+            zlib
+
+      - name: Apply source patches
+        run: |
+          export PATH="$VITASDK/bin:$PATH"
+          bash psvita/scripts/apply_patches.sh
+
+      - name: Configure CMake
+        run: |
+          export PATH="$VITASDK/bin:$PATH"
+          mkdir -p "$BUILD_DIR"
+          cmake psvita \
+            -B "$BUILD_DIR" \
+            -DCMAKE_TOOLCHAIN_FILE="$VITASDK/share/vita.toolchain.cmake" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -G "Unix Makefiles"
+
+      - name: Build
+        run: |
+          export PATH="$VITASDK/bin:$PATH"
+          cmake --build "$BUILD_DIR" --parallel $(nproc)
+
+      - name: Verify VPK was produced
+        run: |
+          if [ ! -f "$BUILD_DIR/luanti.vpk" ]; then
+            echo "ERROR: luanti.vpk not found in $BUILD_DIR"
+            ls -la "$BUILD_DIR/" || true
+            exit 1
+          fi
+          echo "VPK size: $(du -sh $BUILD_DIR/luanti.vpk | cut -f1)"
+
+      - name: Upload VPK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: luanti-vita-${{ github.sha }}
+          path: ${{ env.BUILD_DIR }}/luanti.vpk
+          retention-days: 30
+          if-no-files-found: error
+
+  release:
+    name: Publish release VPK
+    runs-on: ubuntu-22.04
+    needs: build
+    if: >
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/stable-'))
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download VPK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: luanti-vita-${{ github.sha }}
+          path: dist/
+
+      - name: Derive version string
+        id: version
+        run: |
+          MAJOR=$(grep -m1 'set(VERSION_MAJOR' CMakeLists.txt | grep -o '[0-9]*')
+          MINOR=$(grep -m1 'set(VERSION_MINOR' CMakeLists.txt | grep -o '[0-9]*')
+          PATCH=$(grep -m1 'set(VERSION_PATCH' CMakeLists.txt | grep -o '[0-9]*')
+          SHORT_SHA="${GITHUB_SHA::8}"
+          echo "version=${MAJOR}.${MINOR}.${PATCH}-vita-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "tag=vita-${MAJOR}.${MINOR}.${PATCH}-${SHORT_SHA}"     >> "$GITHUB_OUTPUT"
+
+      - name: Rename VPK with version
+        run: |
+          mv dist/luanti.vpk dist/luanti-${{ steps.version.outputs.version }}.vpk
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Luanti ${{ steps.version.outputs.version }} (PS Vita)
+          body: |
+            Automated PS Vita build from commit ${{ github.sha }}.
+
+            **Install:** Transfer the VPK to your Vita and install with VitaShell.
+            Requires HENkaku / Ensō with unsafe homebrew enabled.
+
+            **User data path:** `ux0:data/luanti/`
+          files: dist/luanti-${{ steps.version.outputs.version }}.vpk
+          draft: false
+          prerelease: ${{ github.ref == 'refs/heads/master' }}
