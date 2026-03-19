@@ -80,7 +80,10 @@ set(VITA_ALL_LIBS
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(VitaLibs
     REQUIRED_VARS
-        VITA_SDL2_LIB
         VITA_KERNEL_STUB
         VITA_GXM_STUB
 )
+
+if(NOT VITA_SDL2_LIB)
+    message(WARNING "libSDL2.a not found — run 'vdpm SDL2' inside the vitasdk environment.")
+endif()

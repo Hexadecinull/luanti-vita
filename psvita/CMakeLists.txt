@@ -99,10 +99,17 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${LUANTI_ROOT}/lib/sha256"
 )
 
-set(VITA_LINK_LIBS
-    vitaGL::vitaGL
-    vitaGL::GLESv2
-    vitaGL::EGL
+set(_VLIB "${VITASDK_ROOT}/lib")
+
+set(VITA_LINK_LIBS vitaGL::vitaGL)
+
+foreach(_lib GLESv2 EGL GL)
+    if(EXISTS "${_VLIB}/lib${_lib}.a")
+        list(APPEND VITA_LINK_LIBS "${_VLIB}/lib${_lib}.a")
+    endif()
+endforeach()
+
+list(APPEND VITA_LINK_LIBS
     ${VITA_ALL_LIBS}
     m
     c
