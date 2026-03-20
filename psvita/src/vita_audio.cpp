@@ -78,7 +78,10 @@ int vita_audio_open_channel(int samples, int freq, int fmt)
             g_channels[i].vol_right = SCE_AUDIO_VOLUME_0DB;
 
             int vols[2] = { SCE_AUDIO_VOLUME_0DB, SCE_AUDIO_VOLUME_0DB };
-            sceAudioOutSetVolume(handle, SCE_AUDIO_VOLUME_FLAG_L_CH | SCE_AUDIO_VOLUME_FLAG_R_CH, vols);
+            sceAudioOutSetVolume(handle,
+                static_cast<SceAudioOutChannelFlag>(
+                    SCE_AUDIO_VOLUME_FLAG_L_CH | SCE_AUDIO_VOLUME_FLAG_R_CH),
+                vols);
 
             return i;
         }
@@ -119,7 +122,8 @@ int vita_audio_set_volume(int channel, int vol_left, int vol_right)
     int vols[2] = { vol_left, vol_right };
     return sceAudioOutSetVolume(
         g_channels[channel].handle,
-        SCE_AUDIO_VOLUME_FLAG_L_CH | SCE_AUDIO_VOLUME_FLAG_R_CH,
+        static_cast<SceAudioOutChannelFlag>(
+            SCE_AUDIO_VOLUME_FLAG_L_CH | SCE_AUDIO_VOLUME_FLAG_R_CH),
         vols
     );
 }
