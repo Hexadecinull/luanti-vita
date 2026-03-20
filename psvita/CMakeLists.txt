@@ -153,6 +153,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${VITASDK_ROOT}/include/freetype2"
     "${VITAGL_INCLUDE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
+    "${LUANTI_ROOT}/lib/jsoncpp/include"
 )
 
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
@@ -163,7 +164,6 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     "${LUANTI_ROOT}/src/script"
     "${LUANTI_ROOT}/irr/include"
     "${LUANTI_ROOT}/lib/lua/src"
-    "${LUANTI_ROOT}/lib/jsoncpp/include"
     "${LUANTI_ROOT}/lib/tinygettext"
     "${LUANTI_ROOT}/lib/sha256"
 )
