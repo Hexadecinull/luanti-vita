@@ -71,14 +71,12 @@ jobs:
             libjpeg-turbo \
             zlib
 
-      - name: Guard src/util/string.h against C inclusion
+      - name: Rename src/util/string.h to avoid system header shadowing
         run: |
-          F="src/util/string.h"
-          if ! grep -q "ifdef __cplusplus" "$F"; then
-            sed -i '1s/^/#ifdef __cplusplus\n/' "$F"
-            echo "" >> "$F"
-            echo "#endif" >> "$F"
-          fi
+          mv src/util/string.h src/util/strutil.h
+          grep -rl '"util/string.h"' src/ irr/ | xargs sed -i 's|"util/string.h"|"util/strutil.h"|g'
+          grep -rl '"../util/string.h"' src/ irr/ | xargs sed -i 's|"../util/string.h"|"../util/strutil.h"|g'
+          grep -rl '"../../util/string.h"' src/ irr/ | xargs sed -i 's|"../../util/string.h"|"../../util/strutil.h"|g'
 
       - name: Apply source patches
         run: |

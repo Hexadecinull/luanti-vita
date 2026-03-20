@@ -49,12 +49,12 @@ apply_patch() {
     fi
 }
 
-echo "==> Guarding src/util/string.h against C inclusion..."
-F="$REPO_ROOT/src/util/string.h"
-if ! grep -q "ifdef __cplusplus" "$F"; then
-    sed -i '1s/^/#ifdef __cplusplus\n/' "$F"
-    echo "" >> "$F"
-    echo "#endif" >> "$F"
+echo "==> Renaming src/util/string.h to avoid system header shadowing..."
+if [[ -f "$REPO_ROOT/src/util/string.h" ]]; then
+    mv "$REPO_ROOT/src/util/string.h" "$REPO_ROOT/src/util/strutil.h"
+    grep -rl '"util/string.h"' "$REPO_ROOT/src/" "$REPO_ROOT/irr/" 2>/dev/null | xargs sed -i 's|"util/string.h"|"util/strutil.h"|g'
+    grep -rl '"../util/string.h"' "$REPO_ROOT/src/" "$REPO_ROOT/irr/" 2>/dev/null | xargs sed -i 's|"../util/string.h"|"../util/strutil.h"|g'
+    grep -rl '"../../util/string.h"' "$REPO_ROOT/src/" "$REPO_ROOT/irr/" 2>/dev/null | xargs sed -i 's|"../../util/string.h"|"../../util/strutil.h"|g'
 fi
 
 echo "==> Applying source patches..."
