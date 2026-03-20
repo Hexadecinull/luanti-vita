@@ -49,6 +49,41 @@ apply_patch() {
     fi
 }
 
+echo "==> Patching src/config.h and creating system header shims..."
+cat > "$REPO_ROOT/src/config.h" << 'EOF'
+#pragma once
+#define HAVE_CONFIG_H 1
+#define BUILD_CLIENT 1
+#define BUILD_SERVER 0
+#define CHECK_CLIENT_BUILD() 1
+#define PROJECT_NAME "luanti"
+#define PROJECT_NAME_C "Luanti"
+#define VERSION_MAJOR 5
+#define VERSION_MINOR 16
+#define VERSION_PATCH 0
+#define VERSION_STRING "5.16.0-vita"
+#define USE_GLES2 1
+#define HAVE_OPENGL 1
+#define RUN_IN_PLACE 1
+#define BUILD_DIR_PATH "ux0:data/luanti"
+EOF
+
+if [[ ! -f "$VITASDK/arm-vita-eabi/include/endian.h" ]]; then
+    cat > "$VITASDK/arm-vita-eabi/include/endian.h" << 'EOF'
+#pragma once
+#include <sys/endian.h>
+#ifndef __BIG_ENDIAN
+#define __BIG_ENDIAN 4321
+#endif
+#ifndef __LITTLE_ENDIAN
+#define __LITTLE_ENDIAN 1234
+#endif
+#ifndef __BYTE_ORDER
+#define __BYTE_ORDER __LITTLE_ENDIAN
+#endif
+EOF
+fi
+
 echo "==> Renaming src/util/string.h to avoid system header shadowing..."
 if [[ -f "$REPO_ROOT/src/util/string.h" ]]; then
     mv "$REPO_ROOT/src/util/string.h" "$REPO_ROOT/src/util/strutil.h"

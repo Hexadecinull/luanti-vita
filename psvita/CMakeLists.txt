@@ -55,7 +55,7 @@ add_compile_definitions(
 set(VITA_C_FLAGS   "-O2 -ffast-math -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard")
 set(VITA_CXX_FLAGS "${VITA_C_FLAGS} -Wno-deprecated-declarations -Wno-unused-variable")
 
-set(VITA_PREFIX_HEADER "${CMAKE_BINARY_DIR}/config.h")
+set(VITA_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/vita_prefix.h")
 set(VITA_C_FLAGS   "${VITA_C_FLAGS}   -include ${VITA_PREFIX_HEADER}")
 set(VITA_CXX_FLAGS "${VITA_CXX_FLAGS} -include ${VITA_PREFIX_HEADER}")
 

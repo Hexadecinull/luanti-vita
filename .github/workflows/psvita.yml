@@ -71,6 +71,11 @@ jobs:
             libjpeg-turbo \
             zlib
 
+      - name: Patch src/config.h and create missing system header shims
+        run: |
+          printf '#pragma once\n#define HAVE_CONFIG_H 1\n#define BUILD_CLIENT 1\n#define BUILD_SERVER 0\n#define CHECK_CLIENT_BUILD() 1\n#define PROJECT_NAME "luanti"\n#define PROJECT_NAME_C "Luanti"\n#define VERSION_MAJOR 5\n#define VERSION_MINOR 16\n#define VERSION_PATCH 0\n#define VERSION_STRING "5.16.0-vita"\n#define USE_GLES2 1\n#define HAVE_OPENGL 1\n#define RUN_IN_PLACE 1\n#define BUILD_DIR_PATH "ux0:data/luanti"\n' > src/config.h
+          printf '#pragma once\n#include <sys/endian.h>\n#ifndef __BIG_ENDIAN\n#define __BIG_ENDIAN 4321\n#endif\n#ifndef __LITTLE_ENDIAN\n#define __LITTLE_ENDIAN 1234\n#endif\n#ifndef __BYTE_ORDER\n#define __BYTE_ORDER __LITTLE_ENDIAN\n#endif\n#ifndef htobe16\n#define htobe16(x) __bswap16(x)\n#define htole16(x) (x)\n#define be16toh(x) __bswap16(x)\n#define le16toh(x) (x)\n#define htobe32(x) __bswap32(x)\n#define htole32(x) (x)\n#define be32toh(x) __bswap32(x)\n#define le32toh(x) (x)\n#define htobe64(x) __bswap64(x)\n#define htole64(x) (x)\n#define be64toh(x) __bswap64(x)\n#define le64toh(x) (x)\n#endif\n' > /usr/local/vitasdk/arm-vita-eabi/include/endian.h
+
       - name: Rename src/util/string.h to avoid system header shadowing
         run: |
           mv src/util/string.h src/util/strutil.h
