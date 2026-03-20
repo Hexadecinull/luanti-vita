@@ -41,7 +41,7 @@ add_compile_definitions(
     IRRLICHT_VITA
     BUILD_CLIENT=1
     BUILD_SERVER=0
-    HAVE_CONFIG_H
+    HAVE_CONFIG_H=1
     PROJECT_NAME="luanti"
     PROJECT_NAME_C="Luanti"
     VERSION_MAJOR=5
@@ -53,7 +53,11 @@ add_compile_definitions(
 )
 
 set(VITA_C_FLAGS   "-O2 -ffast-math -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard")
-set(VITA_CXX_FLAGS "${VITA_C_FLAGS} -fno-exceptions -Wno-deprecated-declarations -Wno-unused-variable")
+set(VITA_CXX_FLAGS "${VITA_C_FLAGS} -Wno-deprecated-declarations -Wno-unused-variable")
+
+set(VITA_PREFIX_HEADER "${CMAKE_BINARY_DIR}/config.h")
+set(VITA_C_FLAGS   "${VITA_C_FLAGS}   -include ${VITA_PREFIX_HEADER}")
+set(VITA_CXX_FLAGS "${VITA_CXX_FLAGS} -include ${VITA_PREFIX_HEADER}")
 
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${VITA_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VITA_CXX_FLAGS}")
@@ -65,6 +69,7 @@ file(WRITE "${CMAKE_BINARY_DIR}/config.h"
 "#define HAVE_CONFIG_H 1\n"
 "#define BUILD_CLIENT 1\n"
 "#define BUILD_SERVER 0\n"
+"#define CHECK_CLIENT_BUILD() 1\n"
 "#define PROJECT_NAME \"luanti\"\n"
 "#define PROJECT_NAME_C \"Luanti\"\n"
 "#define VERSION_MAJOR 5\n"
@@ -75,6 +80,9 @@ file(WRITE "${CMAKE_BINARY_DIR}/config.h"
 "#define HAVE_OPENGL 1\n"
 "#define RUN_IN_PLACE 1\n"
 "#define BUILD_DIR_PATH \"ux0:data/luanti\"\n"
+"#define HAVE_ENDIAN_H 1\n"
+"#define _BYTE_ORDER _LITTLE_ENDIAN\n"
+"#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__\n"
 )
 
 find_package(vitaGL REQUIRED)
