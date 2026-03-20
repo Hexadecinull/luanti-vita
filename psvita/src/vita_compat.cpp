@@ -8,7 +8,6 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdint>
-#include <sys/time.h>
 
 #include <map>
 #include <string>
@@ -43,9 +42,9 @@ int vita_gettimeofday(struct timeval *tv, void *tz)
     if (!tv) return -1;
     SceRtcTick tick;
     sceRtcGetCurrentTick(&tick);
-    uint64_t us = tick.tick / 1;
-    tv->tv_sec  = static_cast<long>(us / 1000000ULL);
-    tv->tv_usec = static_cast<long>(us % 1000000ULL);
+    SceUInt32 res = sceRtcGetTickResolution();
+    tv->tv_sec  = static_cast<long>(tick.tick / res);
+    tv->tv_usec = static_cast<long>((tick.tick % res) * 1000000ULL / res);
     return 0;
 }
 

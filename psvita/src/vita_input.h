@@ -1,8 +1,5 @@
 #pragma once
 
-#include <psp2/ctrl.h>
-#include <psp2/touch.h>
-#include <SDL2/SDL.h>
 #include <cstdint>
 
 namespace vita_input

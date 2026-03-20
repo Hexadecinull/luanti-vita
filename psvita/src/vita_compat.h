@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <sys/time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,25 +30,15 @@ int vita_getpid();
 #endif
 
 #ifdef __vita__
-#include <psp2/rtc.h>
-#include <psp2/kernel/processmgr.h>
 
-#ifndef __DEFINED_timeval
-#define __DEFINED_timeval
-struct timeval {
-    long tv_sec;
-    long tv_usec;
-};
-#endif
-
-#ifndef SYSCONF_NPROCESSORS_ONLN
+#ifndef _SC_NPROCESSORS_ONLN
 #define _SC_NPROCESSORS_ONLN 1
 #endif
 
-#define gettimeofday(tv, tz) vita_gettimeofday((tv), (tz))
-#define sleep(s)             vita_sleep(s)
-#define usleep(us)           vita_usleep(us)
-#define isatty(fd)           vita_isatty(fd)
-#define sysconf(n)           vita_sysconf(n)
-#define getpid()             vita_getpid()
+#define sleep(s)    vita_sleep(s)
+#define usleep(us)  vita_usleep(us)
+#define isatty(fd)  vita_isatty(fd)
+#define sysconf(n)  vita_sysconf(n)
+#define getpid()    vita_getpid()
+
 #endif

@@ -1,3 +1,5 @@
+#include <vitaGL.h>
+
 #include <psp2/kernel/processmgr.h>
 #include <psp2/appmgr.h>
 #include <psp2/apputil.h>
@@ -8,8 +10,6 @@
 #include <psp2/ime_dialog.h>
 
 #include <SDL2/SDL.h>
-
-#include <vitaGL.h>
 
 #include <cstdlib>
 #include <cstdio>
@@ -31,7 +31,6 @@ static void vita_load_modules()
     sceSysmoduleLoadModule(SCE_SYSMODULE_HTTP);
     sceSysmoduleLoadModule(SCE_SYSMODULE_HTTPS);
     sceSysmoduleLoadModule(SCE_SYSMODULE_SSL);
-    sceSysmoduleLoadModule(SCE_SYSMODULE_SQLITE);
     sceSysmoduleLoadModule(SCE_SYSMODULE_AVPLAYER);
     sceSysmoduleLoadModule(SCE_SYSMODULE_RUDP);
 }
@@ -49,7 +48,6 @@ static void vita_init_gl()
 {
     vglInitExtended(0, 960, 544, 0x1800000, SCE_GXM_MULTISAMPLE_NONE);
     vglUseVram(GL_TRUE);
-    vglMapHeapMem();
 }
 
 static void vita_init_sdl()
@@ -110,7 +108,6 @@ int main(int argc, char *argv[])
 
     vita_audio_shutdown();
     SDL_Quit();
-    vglEnd();
     sceKernelExitProcess(ret);
     return ret;
 }

@@ -51,11 +51,26 @@ add_compile_definitions(
 
 set(VITA_C_FLAGS   "-O2 -ffast-math -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard")
 set(VITA_CXX_FLAGS "${VITA_C_FLAGS} -fno-exceptions -Wno-deprecated-declarations -Wno-unused-variable")
+set(VITA_CXX_FLAGS "${VITA_CXX_FLAGS} -include sys/time.h -include string.h")
 
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   ${VITA_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VITA_CXX_FLAGS}")
 
 
+
+file(WRITE "${CMAKE_BINARY_DIR}/config.h"
+"#pragma once\n"
+"#define PROJECT_NAME \"luanti\"\n"
+"#define PROJECT_NAME_C \"Luanti\"\n"
+"#define VERSION_MAJOR 5\n"
+"#define VERSION_MINOR 16\n"
+"#define VERSION_PATCH 0\n"
+"#define VERSION_STRING \"5.16.0-vita\"\n"
+"#define USE_GLES2 1\n"
+"#define HAVE_OPENGL 1\n"
+"#define RUN_IN_PLACE 1\n"
+"#define BUILD_DIR_PATH \"ux0:data/luanti\"\n"
+)
 
 find_package(vitaGL REQUIRED)
 
@@ -118,6 +133,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
+    "${CMAKE_BINARY_DIR}"
     "${VITASDK_ROOT}/include"
     "${VITASDK_ROOT}/include/SDL2"
     "${VITASDK_ROOT}/include/freetype2"
