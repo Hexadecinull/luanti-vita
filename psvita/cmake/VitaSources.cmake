@@ -12,6 +12,7 @@ set(VITA_PLATFORM_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/src/vita_irr_driver.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/vita_thread.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/vita_debug.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/vita_prefix.h"
 )
 
 file(GLOB_RECURSE LUANTI_CLIENT_SOURCES
