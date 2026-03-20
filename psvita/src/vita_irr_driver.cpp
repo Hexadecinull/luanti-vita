@@ -20,7 +20,6 @@ IrrlichtDevice *createVitaDevice(const SIrrlichtCreationParameters &params)
     p.Vsync           = false;
     p.AntiAlias       = 0;
     p.Stencilbuffer   = false;
-    p.IgnoreInput     = false;
     p.WindowId        = nullptr;
 
     return createDeviceEx(p);
