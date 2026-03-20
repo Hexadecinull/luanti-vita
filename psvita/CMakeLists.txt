@@ -39,6 +39,9 @@ add_compile_definitions(
     NDEBUG
     _REENTRANT
     IRRLICHT_VITA
+    BUILD_CLIENT=1
+    BUILD_SERVER=0
+    HAVE_CONFIG_H
     PROJECT_NAME="luanti"
     PROJECT_NAME_C="Luanti"
     VERSION_MAJOR=5
@@ -59,6 +62,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VITA_CXX_FLAGS}")
 
 file(WRITE "${CMAKE_BINARY_DIR}/config.h"
 "#pragma once\n"
+"#define HAVE_CONFIG_H 1\n"
+"#define BUILD_CLIENT 1\n"
+"#define BUILD_SERVER 0\n"
 "#define PROJECT_NAME \"luanti\"\n"
 "#define PROJECT_NAME_C \"Luanti\"\n"
 "#define VERSION_MAJOR 5\n"
@@ -145,6 +151,7 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     "${LUANTI_ROOT}/src/client"
     "${LUANTI_ROOT}/src/server"
     "${LUANTI_ROOT}/src/util"
+    "${LUANTI_ROOT}/src/script"
     "${LUANTI_ROOT}/irr/include"
     "${LUANTI_ROOT}/lib/lua/src"
     "${LUANTI_ROOT}/lib/jsoncpp/include"
