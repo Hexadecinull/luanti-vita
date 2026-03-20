@@ -62,7 +62,7 @@ bool vita_network_is_connected()
 {
     if (!g_net_ready) return false;
     SceNetCtlInfo info;
-    int ret = sceNetCtlGetInfo(SCE_NETCTL_INFO_GET_IP_ADDRESS, &info);
+    int ret = sceNetCtlInetGetInfo(SCE_NETCTL_INFO_GET_IP_ADDRESS, &info);
     return ret >= 0;
 }
 
