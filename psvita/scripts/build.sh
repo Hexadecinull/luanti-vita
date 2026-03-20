@@ -49,6 +49,14 @@ apply_patch() {
     fi
 }
 
+echo "==> Guarding src/util/string.h against C inclusion..."
+F="$REPO_ROOT/src/util/string.h"
+if ! grep -q "ifdef __cplusplus" "$F"; then
+    sed -i '1s/^/#ifdef __cplusplus\n/' "$F"
+    echo "" >> "$F"
+    echo "#endif" >> "$F"
+fi
+
 echo "==> Applying source patches..."
 for p in "$SCRIPT_DIR"/*.patch; do
     [[ -f "$p" ]] || continue

@@ -71,6 +71,15 @@ jobs:
             libjpeg-turbo \
             zlib
 
+      - name: Guard src/util/string.h against C inclusion
+        run: |
+          F="src/util/string.h"
+          if ! grep -q "ifdef __cplusplus" "$F"; then
+            sed -i '1s/^/#ifdef __cplusplus\n/' "$F"
+            echo "" >> "$F"
+            echo "#endif" >> "$F"
+          fi
+
       - name: Apply source patches
         run: |
           export PATH="$VITASDK/bin:$PATH"
