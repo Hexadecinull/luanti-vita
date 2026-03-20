@@ -142,6 +142,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${VITASDK_ROOT}/include/freetype2"
     "${VITAGL_INCLUDE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     "${LUANTI_ROOT}/src"
     "${LUANTI_ROOT}/src/client"
     "${LUANTI_ROOT}/src/server"

@@ -1,18 +1,18 @@
 #pragma once
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <math.h>
-#include <time.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <dirent.h>
-#include <pthread.h>
+#ifdef __vita__
+#include "/usr/local/vitasdk/arm-vita-eabi/include/sys/types.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/sys/time.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/sys/stat.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/stdio.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/stdlib.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/string.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/stdint.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/stddef.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/errno.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/math.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/time.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/unistd.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/fcntl.h"
+#include "/usr/local/vitasdk/arm-vita-eabi/include/pthread.h"
+#endif
