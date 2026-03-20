@@ -74,9 +74,9 @@ jobs:
       - name: Rename src/util/string.h to avoid system header shadowing
         run: |
           mv src/util/string.h src/util/strutil.h
-          grep -rl '"util/string.h"' src/ irr/ | xargs sed -i 's|"util/string.h"|"util/strutil.h"|g'
-          grep -rl '"../util/string.h"' src/ irr/ | xargs sed -i 's|"../util/string.h"|"../util/strutil.h"|g'
-          grep -rl '"../../util/string.h"' src/ irr/ | xargs sed -i 's|"../../util/string.h"|"../../util/strutil.h"|g'
+          find src/ irr/ -type f \( -name "*.h" -o -name "*.cpp" -o -name "*.c" \) \
+            -exec grep -l 'util/string\.h' {} \; \
+            | xargs -r sed -i 's|util/string\.h|util/strutil.h|g'
 
       - name: Apply source patches
         run: |

@@ -52,9 +52,9 @@ apply_patch() {
 echo "==> Renaming src/util/string.h to avoid system header shadowing..."
 if [[ -f "$REPO_ROOT/src/util/string.h" ]]; then
     mv "$REPO_ROOT/src/util/string.h" "$REPO_ROOT/src/util/strutil.h"
-    grep -rl '"util/string.h"' "$REPO_ROOT/src/" "$REPO_ROOT/irr/" 2>/dev/null | xargs sed -i 's|"util/string.h"|"util/strutil.h"|g'
-    grep -rl '"../util/string.h"' "$REPO_ROOT/src/" "$REPO_ROOT/irr/" 2>/dev/null | xargs sed -i 's|"../util/string.h"|"../util/strutil.h"|g'
-    grep -rl '"../../util/string.h"' "$REPO_ROOT/src/" "$REPO_ROOT/irr/" 2>/dev/null | xargs sed -i 's|"../../util/string.h"|"../../util/strutil.h"|g'
+    find "$REPO_ROOT/src/" "$REPO_ROOT/irr/" -type f \( -name "*.h" -o -name "*.cpp" -o -name "*.c" \) \
+        -exec grep -l 'util/string\.h' {} \; \
+        | xargs -r sed -i 's|util/string\.h|util/strutil.h|g'
 fi
 
 echo "==> Applying source patches..."
